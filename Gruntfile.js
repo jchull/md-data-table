@@ -37,11 +37,16 @@ module.exports = function (grunt) {
     // condense javascript into a single file
     concat: {
       options: {
+        banner: '(function (window, angular, undefined) {\n\'use strict\';\n\n',
+        footer: '\n\n})(window, angular);',
+        process: function (src) {
+          return src.replace(/^'use strict';\s*/, '');
+        },
         separator: '\n\n'
       },
       build: {
         files: {
-          'dist/md-data-table.js': ['app/md-data-table/**/*.js', '.temp/templates.js']
+          'dist/md-data-table.js': ['.temp/templates.js', 'app/md-data-table/**/*.js']
         }
       }
     },
@@ -77,12 +82,11 @@ module.exports = function (grunt) {
           module: 'md.table.templates',
           quoteChar: '\'',
           rename: function(moduleName) {
-            return 'templates.' + moduleName.split('/').pop();
-          },
-          useStrict: true
+            return moduleName.split('/').pop();
+          }
         },
         files: {
-          '.temp/templates.js': 'app/md-data-table/**/*.html'
+          '.temp/templates.js': ['app/md-data-table/templates/*.html', 'app/md-data-table/icons/*.svg']
         }
       }
     },
@@ -108,7 +112,7 @@ module.exports = function (grunt) {
       },
       build: {
         files: {
-          'dist/md-data-table.css': 'app/md-data-table/styles/md-data-table.less'
+          'dist/md-data-table.css': 'app/md-data-table/styles/md-table.less'
         }
       }
     },
@@ -159,7 +163,7 @@ module.exports = function (grunt) {
     }
   });
   
-  grunt.registerTask('default', function() {
+  grunt.registerTask('default', function () {
     
     // buld the md-data-table module
     grunt.task.run('build');
